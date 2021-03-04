@@ -3,6 +3,8 @@ import * as http from 'http'
 import * as fs from 'fs'
 import * as mongoose from 'mongoose'
 import * as g2r from 'glob-to-regexp'
+import user from './schema/user'
+import * as bcrypt from 'bcrypt'
 
 class BaseApp {
     /**
@@ -117,10 +119,10 @@ export class AuthenticatedApp extends App {
      * The mongoose connection
      */
     private db: typeof mongoose
-
-    private uDb: { [key: string]: string } = {
-        'yee': 'wif'
-    }
+    /**
+     * The mongoose model for user
+     */
+    private userModel: mongoose.Model<any>
 
     /**
      * Create a new ExpressX instance with support for authenticated routes
@@ -146,7 +148,7 @@ export class AuthenticatedApp extends App {
                     if(!req.query.username || !req.query.password) {
                         res.send('You are not allowed to visit this page')
                     }else {
-                        if(this.uDb[<string>req.query.username] && this.uDb[<string>req.query.username] === req.query.password) {
+                        if(this.isValid(<string>req.query.username, <string>req.query.password)) {
                             break
                         }else {
                             res.send('You are not allowed to visit this page')
@@ -159,12 +161,28 @@ export class AuthenticatedApp extends App {
             next()
         })
     }
+    
+    /**
+     * Checks wheter given user credentials are correct
+     * @param username The username for the user
+     * @param password The password for the user (hashed)
+     */
+    private async isValid(username: string, password: string): Promise<boolean> {
+        const u = await this.userModel.findOne({
+            name: username,
+            password: password
+        })
+
+        return u ? true : false
+    }
 
     public async listen(): Promise<number> {
         this.db = await mongoose.connect(this.dbUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
+
+        this.userModel = this.db.model('User', user)
 
         return super.listen()
     }
@@ -176,5 +194,33 @@ export class AuthenticatedApp extends App {
 
             this.authenticated.push(r)
         }
+    }
+
+    /**
+     * Register a user to the mongodb database
+     * @param username The username for the user
+     * @param email The users email
+     * @param password The password for the user (not hashed)
+     */
+    public async register(username: string, email: string, password: string) {
+        if(!await this.isAvailable(username)) throw new Error(`The username ${username} is already taken`)
+
+        const u = new this.userModel({
+            name: username,
+            email: email,
+            password: bcrypt.hashSync(password, 8)
+        })
+
+        await u.save()
+    }
+
+    /**
+     * Checks whether specified username is available
+     * @param username The username to check for
+     */
+    public async isAvailable(username: string): Promise<boolean> {
+        return await this.userModel.findOne({
+            name: username
+        }) ? false : true
     }
 }

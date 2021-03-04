@@ -33,4 +33,12 @@ app.setPageNotFound(__dirname + '/public/404.html') /* This will make sure the s
 If you go to a non-existant path on localhost [localhost/thisisveryunlikelytoexist](http://localhost:80/thisisveryunlikelytoexist) you'll see you get presented with the 404 page you just specified. \
 You're done, you now have a very simple webserver that serves static files and a costum 404 page!
 ## Usage with authentication (built-in)
-Coming soon
+ExpressX provides several utility methods for authentication. \
+If you want to use these methods switch out the App class for the AuthenticatedApp class.
+### List of authentication utility methods:
+name | description
+:---: | :---:
+`app.requireAuthentication(route: string): void` | Specify a route or glob that requires users to be authenticated
+:warning: All below methods require app.listen() to be called and have finished
+`app.isAvalable(name: string): Promise<boolean>` | Get wheter a specific username is still available
+`app.register(name: string, email: string, password: string): Promise<void>` | Register a specific user by name, email and unhashed password. Throws an error when username is taken

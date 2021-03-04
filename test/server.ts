@@ -7,4 +7,15 @@ app.setPublicDir(__dirname + '/public') // Staticly server everything in the pub
 
 app.requireAuthentication('admin/*') // Require authentication for all requests starting with /admin
 
-app.listen().then(console.log) // Start listening and log the port when up
+app.listen().then((port) => {
+    console.log(`Online on port ${port}`) // Log the port when up
+
+    // !!!Note that user related operations like app.isAvailable() or app.register() can only be called after app.listen() is resolved
+    app.isAvailable('John Doe').then((available) /* Check wheter the username John Doe is still available */  => {
+        if(available) { // Only register or user when the username is still available
+            app.register('John Doe', 'john.doe@example.com', '123456').then(() => {
+                console.log('Registered John Doe') // Log a message when registering is complete
+            }) // Register a user
+        }
+    })
+}) // Start listening
