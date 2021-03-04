@@ -1,10 +1,16 @@
 {
   "name": "expressx",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "license": "MIT",
   "scripts": {
-    "start": "ts-node test/server.ts"
+    "start": "ts-node test/server.ts",
+    "build": "tsc",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
