@@ -3,7 +3,6 @@ I mainly made this for pesonal use and can therefore not guarantee that I will c
 
 # ExpressX
 Express wrapper for even easier usage and built-in authentication trough MongoDB
-
 ## Usage
 ```typescript
 import { App } from 'expressx'; // Import App from ExpressX
@@ -42,3 +41,10 @@ name | description
 :warning: All below methods require app.listen() to be called and have finished
 `app.isAvalable(name: string): Promise<boolean>` | Get wheter a specific username is still available
 `app.register(name: string, email: string, password: string): Promise<void>` | Register a specific user by name, email and unhashed password. Throws an error when username is taken
+## Advanced usage
+### List of exposed Express classes/methods on App class:
+name | description | reference
+:---: | :---: | :---:
+app.app | Internal Express.Application instance | [Express docs](https://expressjs.com/en/4x/api.html#app)
+app.router | Express.Router the server uses for managing requests, use this for costum request handling and not app.app | [Express docs](https://expressjs.com/en/4x/api.html#router)
+app.server | http.Server instance used by the server | [NodeJS docs](https://nodejs.org/api/http.html#http_class_http_server)
