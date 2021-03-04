@@ -41,6 +41,10 @@ name | description
 :warning: All below methods require app.listen() to be called and have finished
 `app.isAvalable(name: string): Promise<boolean>` | Get wheter a specific username is still available
 `app.register(name: string, email: string, password: string): Promise<void>` | Register a specific user by name, email and unhashed password. Throws an error when username is taken
+### How to authenticate
+A client authenticates using the username and password query parameters. \
+username is the plain text username, \
+password is a bcrypt hashed password with 8 rounds.
 ## Advanced usage
 ### List of exposed Express classes/methods on App class:
 name | description | reference
