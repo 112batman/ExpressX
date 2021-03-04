@@ -6,7 +6,7 @@ Express wrapper for even easier usage and built-in authentication trough MongoDB
 
 ## Usage
 ```typescript
-import { App } from 'ExpressX'; // Import App from ExpressX
+import { App } from 'expressx'; // Import App from ExpressX
 
 const app = new App(80); // Create a new ExpressX app that will listen on port 80
 
