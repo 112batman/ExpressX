@@ -138,7 +138,7 @@ export class AuthenticatedApp extends App {
     protected lateInit() {
         super.lateInit()
 
-        this.router.use((req, res, next) => {
+        this.router.use(async (req, res, next) => {
             for(let i = 0; i < this.authenticated.length; i++) {
                 const route = this.authenticated[i]
 
@@ -147,14 +147,18 @@ export class AuthenticatedApp extends App {
                 }).test(req.url))) {
                     if(!req.query.username || !req.query.password) {
                         res.send('You are not allowed to visit this page')
-                    }else {
-                        if(this.isValid(<string>req.query.username, <string>req.query.password)) {
-                            break
-                        }else {
-                            res.send('You are not allowed to visit this page')
-                        }
+                        return
                     }
-                    return
+
+                    const username = <string>req.query.username
+                    const password = <string>req.query.password
+
+                    if(await this.isValid(username, password)) {
+                        break
+                    }else {
+                        res.send('You are not allowed to visit this page')
+                        return
+                    }
                 }else continue
             }
 
@@ -165,15 +169,15 @@ export class AuthenticatedApp extends App {
     /**
      * Checks wheter given user credentials are correct
      * @param username The username for the user
-     * @param password The password for the user (hashed)
+     * @param password The password for the user
      */
     private async isValid(username: string, password: string): Promise<boolean> {
         const u = await this.userModel.findOne({
-            name: username,
-            password: password
+            name: username
         })
 
-        return u ? true : false
+        if(!u) return false
+        return bcrypt.compareSync(password, u.password)
     }
 
     public async listen(): Promise<number> {

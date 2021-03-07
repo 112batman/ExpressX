@@ -44,7 +44,7 @@ name | description
 ### How to authenticate
 A client authenticates using the username and password query parameters. \
 username is the plain text username, \
-password is a bcrypt hashed password with 8 rounds.
+password is the plain text password
 ## Advanced usage
 ### List of exposed Express classes/methods on App class:
 name | description | reference
