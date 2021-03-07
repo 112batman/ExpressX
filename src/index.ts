@@ -187,6 +187,10 @@ export class AuthenticatedApp extends App {
         return super.listen()
     }
 
+    /**
+     * Require authentication for a specific url
+     * @param route A string specifing a route that requires authentication, you can use * in the string as wildcard
+     */
     public requireAuthentication(route: string) {
         if(!this.authenticated.includes(route)) {
             let r = route
